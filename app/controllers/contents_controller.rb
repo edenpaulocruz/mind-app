@@ -4,6 +4,12 @@ class ContentsController < ApplicationController
   
   def index
     @contents = current_user.contents
+
+    tag_names = params[:tags]
+
+    if tag_names.present?
+      @contents = @contents.joins(:tags).where(tags: { name: tag_names }).distinct
+    end
   end
 
   def show; end
@@ -17,7 +23,7 @@ class ContentsController < ApplicationController
 
     if @content.save
       link_tags!
-      
+
       redirect_to contents_path, notice: 'Content sucessfully created!'
     else
       render :new
